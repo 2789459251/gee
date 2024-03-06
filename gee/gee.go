@@ -3,6 +3,7 @@ package gee
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
 type Engine struct {
@@ -36,6 +37,10 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine.groups = append(engine.groups, newGroup)
 	return newGroup
 }
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
+}
+
 func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
 	pattern := group.prefix + comp
 	log.Printf("路径%s - %s", method, pattern)
@@ -63,6 +68,14 @@ func (engine *Engine) Run(addr string) (err error) {
 
 // 拦截了所有http请求，交给该实例处理
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range engine.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
+
 	c := newContext(w, req)
+	c.handlers = middlewares
 	engine.router.handle(c)
 }
