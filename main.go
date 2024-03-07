@@ -1,11 +1,6 @@
 package main
 
-import (
-	"gee"
-	"log"
-	"net/http"
-	"time"
-)
+import "gee"
 
 //分组测试
 //func main() {
@@ -56,26 +51,72 @@ import (
 //}
 
 // 中间件
-func onlyForv2() gee.HandlerFunc {
-	return func(c *gee.Context) {
-		t := time.Now()
-		c.Fail(500, "Internal Server 错误\n")
-		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
-	}
-}
+//func onlyForv2() gee.HandlerFunc {
+//	return func(c *gee.Context) {
+//		t := time.Now()
+//		c.Fail(500, "Internal Server 错误\n")
+//		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
+//	}
+//}
+//func main() {
+//	r := gee.New()
+//	r.Use(gee.Logger())
+//	r.GET("/", func(c *gee.Context) {
+//		c.HTML(http.StatusOK, "<h1>hello gee&nbsp</h1>")
+//	})
+//	v2 := r.Group("/v2")
+//	v2.Use(onlyForv2())
+//	{
+//		v2.GET("/hello/:name", func(c *gee.Context) {
+//			c.String(http.StatusOK, "hello %s,you are at %s", c.Param("name"), c.Req.RequestURI)
+//		})
+//	}
+//
+//	r.Run(":9999")
+//}
+
+//		template文件
+//type student struct {
+//	Name string
+//	Age  int8
+//}
+//
+//func FormatAsDate(t time.Time) string {
+//	year, mouth, day := t.Date()
+//	return fmt.Sprintf("%d-%02d-%02d", year, mouth, day)
+//}
+//func main() {
+//	r := gee.New()
+//	r.Use(gee.Logger())
+//	r.SetFuncMap(template.FuncMap{
+//		"FormatAsDate": FormatAsDate,
+//	})
+//	r.LoadHTMLGlob("templates/*")
+//	r.Static("/assets", "./static")
+//
+//	stu1 := &student{Name: "zy", Age: 19}
+//	stu2 := &student{Name: "sy", Age: 29}
+//
+//	r.GET("/", func(c *gee.Context) {
+//		c.HTML(http.StatusOK, "css.tmpl", nil)
+//	})
+//	r.GET("/students", func(c *gee.Context) {
+//		c.HTML(http.StatusOK, "arr.tmpl", gee.H{
+//			"title":  "gee",
+//			"stuArr": []*student{stu2, stu1},
+//		})
+//	})
+//	r.GET("/date", func(c *gee.Context) {
+//		c.HTML(http.StatusOK, "custom_func.tmpl", gee.H{
+//			"title": "gee",
+//			"now":   time.Date(2024, 3, 7, 0, 0, 0, 0, time.UTC),
+//		})
+//	})
+//	r.Run(":9999")
+//}
+
 func main() {
 	r := gee.New()
-	r.Use(gee.Logger())
-	r.GET("/", func(c *gee.Context) {
-		c.HTML(http.StatusOK, "<h1>hello gee&nbsp</h1>")
-	})
-	v2 := r.Group("/v2")
-	v2.Use(onlyForv2())
-	{
-		v2.GET("/hello/:name", func(c *gee.Context) {
-			c.String(http.StatusOK, "hello %s,you are at %s", c.Param("name"), c.Req.RequestURI)
-		})
-	}
-
+	r.Static("/assets", "./static")
 	r.Run(":9999")
 }
