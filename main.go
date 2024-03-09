@@ -1,6 +1,9 @@
 package main
 
-import "gee"
+import (
+	"gee"
+	"net/http"
+)
 
 //分组测试
 //func main() {
@@ -115,8 +118,20 @@ import "gee"
 //	r.Run(":9999")
 //}
 
+//func main() {
+//	r := gee.New()
+//	r.Static("/assets", "./static")
+//	r.Run(":9999")
+//}
+
 func main() {
 	r := gee.New()
-	r.Static("/assets", "./static")
+	r.GET("/", func(c *gee.Context) {
+		c.String(http.StatusOK, "hello  geektutu")
+	})
+	r.GET("/panic", func(c *gee.Context) {
+		names := []string{"geektutu"}
+		c.String(http.StatusOK, "hello %s", names[100])
+	})
 	r.Run(":9999")
 }
